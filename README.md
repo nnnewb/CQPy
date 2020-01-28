@@ -19,3 +19,11 @@
 3. `cmake --build build`
 
 `app.json`同理，自己看着办吧。
+
+## special thanks
+
+特别感谢 @richardchien 大佬的 cqcppsdk，因为没找到 酷Q 的 C++ api 文档，所以很大程度上借(<kbd>ctrl</kbd>+<kbd>c</kbd>)鉴(<kbd>ctrl</kbd>+<kbd>v</kbd>)了 richardchien 的代码，稍加我自己喜好的风格润色。
+
+## LICENSE
+
+以 GPL-v3 协议开放源代码。
