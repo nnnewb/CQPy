@@ -1,7 +1,7 @@
 $projectDir = Split-Path $PSScriptRoot -Parent
 
-$coolqRoot = "C:\Users\weakptr\AppData\Roaming\¿áQ Pro" # ÐÞ¸ÄÎªÄãµÄ¿áQÄ¿Â¼
-$appId = "top.weak-ptr.frejya"  # ÄãµÄ App ID
+$coolqRoot = "C:\Users\weakptr\AppData\Roaming\ï¿½ï¿½Q Pro" # ï¿½Þ¸ï¿½Îªï¿½ï¿½Ä¿ï¿½QÄ¿Â¼
+$appId = "top.weak-ptr.cqpy"  # ï¿½ï¿½ï¿½ App ID
 $appOutDir = "${ProjectDir}\build"
 
 $coolqAppDevDir = "$coolqRoot\dev\$appId"
@@ -10,8 +10,8 @@ $dllPath = "$appOutDir\$dllName"
 $jsonName = "app.json"
 $jsonPath = "$projectDir\$jsonName"
 
-Write-Host "ÕýÔÚ¿½±´²å¼þµ½¿áQÓ¦ÓÃÄ¿Â¼¡­¡­"
+Write-Host "ï¿½ï¿½ï¿½Ú¿ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½QÓ¦ï¿½ï¿½Ä¿Â¼ï¿½ï¿½ï¿½ï¿½"
 New-Item -Path $coolqAppDevDir -ItemType Directory -ErrorAction SilentlyContinue
 Copy-Item -Force $dllPath "$coolqAppDevDir\app.dll"
 Copy-Item -Force $jsonPath "$coolqAppDevDir\$jsonName"
-Write-Host "¿½±´Íê³É" -ForegroundColor Green
+Write-Host "ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½" -ForegroundColor Green
