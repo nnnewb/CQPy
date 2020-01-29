@@ -9,7 +9,7 @@ set(CMAKE_CXX_STANDARD 17)
 # 添加编译参数
 add_compile_definitions(APP_ID="${PROJECT_NAME}")
 add_compile_options(/utf-8)
-add_definitions(-DAPP_ID="top.weak-ptr.frejya" -DNOMINMAX)
+add_definitions(-DAPP_ID="top.weak-ptr.cqpy" -DNOMINMAX)
 
 # 引入 pybind11
 find_package(pybind11 REQUIRED)
