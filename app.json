@@ -6,7 +6,8 @@
     "version_id": 1,
     "author": "weak_ptr",
     "description": "芙蕾雅在这里哦~",
-    "event": [ // 可以修改 priority 来调整插件的优先级, 其它字段不可修改, 否则将无法使用
+    "event": [ 
+        // 可以修改 priority 来调整插件的优先级, 其它字段不可修改, 否则将无法使用
         {
             "id": 1003,
             "type": 1003,
@@ -113,18 +114,12 @@
             "priority": 30000
         }
     ],
-    "menu": [ // name 字段为显示在酷Q应用菜单中的文字, function 字段对应 CQ_MENU 宏调用的参数
-        {
-            "name": "菜单 1",
-            "function": "menu_demo_1"
-        },
-        {
-            "name": "菜单 2",
-            "function": "menu_demo_2"
-        }
+    "menu": [ 
+        // name 字段为显示在酷Q应用菜单中的文字, function 字段对应 CQ_MENU 宏调用的参数
     ],
     "status": [],
-    "auth": [ // 需要根据 API 调用情况来注释或取消注释这里的项
+    "auth": [ 
+        // 需要根据 API 调用情况来注释或取消注释这里的项
         // 20, // get_cookies / get_csrf_token
         // 30, // get_record
         101, // send_group_message

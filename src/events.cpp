@@ -1,5 +1,7 @@
 #include "events.hpp"
 #include "cqapi.hpp"
+#include "cqpy.hpp"
+
 
 #pragma region LifeCycle
 
@@ -20,13 +22,24 @@ CQ_EVENT(int32_t, Initialize, 4, int32_t auth_code)
 // 启用插件
 CQ_EVENT(int32_t, cq_event_enable, 0)
 {
-    CQ_addLog(AUTH_CODE, 10, "Log", "Hello world");
-    return 0;
+    py::initialize_interpreter();
+
+    try
+    {
+        auto module = py::module::import("cqpy");
+        return module.attr("on_enable").call().cast<int32_t>();
+    }
+    catch (const py::error_already_set &e)
+    {
+        CQ_addLog(AUTH_CODE, 30, "CQPy", e.what());
+        return -1;
+    }
 }
 
 // 禁用插件
 CQ_EVENT(int32_t, cq_event_disable, 0)
 {
+    py::finalize_interpreter();
     return 0;
 }
 

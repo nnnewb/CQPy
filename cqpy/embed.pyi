@@ -1,36 +1,3 @@
-# CQPy
-
-轻量级的酷Q Python插件，支持运行指定的 Python 模块。
-
-<del>原本是这么想的...</del>
-
-总之，现在是一个最简的酷Q API包装，基本什么都没有，可以随意往里面添加东西。
-
-## requirements
-
-首先你需要一个`Visual Studio 2019`和`CMake`，然后我推荐使用vcpkg来安装相关依赖。
-
-依赖项：
-
-- `pybind11`
-
-## Usage
-
-在酷Q目录（有`CQP.exe`文件的目录）下创建`cqpy.py`文件，内容如下：
-
-```python
-import embed
-
-def on_enable():
-    embed.cq_add_log(embed.get_auth_code(), 10, "py", "Hello world!")
-    return 0
-```
-
-在酷Q里启用插件，即可看到日志里输出了一行`Hello world!`。
-
-embed模块提供了下列api。
-
-```python
 # internal
 def get_auth_code(auth_code: int) -> int: ...
 
@@ -84,31 +51,3 @@ def cq_can_send_record(auth_code: int) -> int: ...
 def cq_add_log(auth_code: int, level: int, category: bytes, log_msg: bytes) -> int: ...
 def cq_set_fatal(auth_code: int, error_info: bytes) -> int: ...
 def cq_set_restart(auth_code: int) -> int: ...
-```
-
-
-## Build
-
-准备工作：启用酷Q的开发模式。
-
-1. 把 `script/install.ps1`里的路径改成你的酷Q安装路径。
-2. 把 `CMakeLists.txt` 中 `add_definitions(-DAPP_ID="top.weak-ptr.frejya" -DNOMINMAX)` 的 `top.weak-ptr.frejya` 改为你的应用ID
-3. 把 `app.json` 中 `name`、`author`、`description` 改为你的应用信息。
-4. 执行下面的命令
-
-```batch
-cd /path/to/CQPy
-mkdir build
-cmake . -B build
-cmake --build build
-```
-
-完成后即可在`酷Q Pro\dev\你的AppID\`下看到`app.dll`和`app.json`两个文件了。
-
-## special thanks
-
-特别感谢 @richardchien 大佬的 cqcppsdk，因为没找到 酷Q 的 C++ api 文档，所以很大程度上借(<kbd>ctrl</kbd>+<kbd>c</kbd>)鉴(<kbd>ctrl</kbd>+<kbd>v</kbd>)了 richardchien 的代码，稍加我自己喜好的风格润色。
-
-## LICENSE
-
-以 GPL-v3 协议开放源代码。
