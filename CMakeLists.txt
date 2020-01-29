@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.14)
-set(PROJECT_NAME top.weak-ptr.frejya)
-project(top.weak-ptr.frejya LANGUAGES CXX VERSION 0.1.0)
+set(PROJECT_NAME top.weak-ptr.cqpy)
+project(top.weak-ptr.cqpy LANGUAGES CXX VERSION 0.1.0)
 
 include_directories(src)
 aux_source_directory(src SOURCES)

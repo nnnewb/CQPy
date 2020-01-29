@@ -148,7 +148,7 @@ def cq_set_restart(auth_code: int) -> int: ...
 准备工作：启用酷Q的开发模式。
 
 1. 把 `script/install.ps1`里的路径改成你的酷Q安装路径。
-2. 把 `CMakeLists.txt` 中 `add_definitions(-DAPP_ID="top.weak-ptr.frejya" -DNOMINMAX)` 的 `top.weak-ptr.frejya` 改为你的应用ID
+2. 把 `CMakeLists.txt` 中 `add_definitions(-DAPP_ID="top.weak-ptr.cqpy" -DNOMINMAX)` 的 `top.weak-ptr.cqpy` 改为你的应用ID
 3. 把 `app.json` 中 `name`、`author`、`description` 改为你的应用信息。
 4. 执行下面的命令
 
