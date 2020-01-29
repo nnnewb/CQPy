@@ -16,6 +16,8 @@
 
 ## Usage
 
+> SDK 还在 WIP 的状态，需要做基础的 Python 封装才比较方便使用(字符串解码、base64解码、json解码、回调注册)，欢迎提 PR。
+
 在酷Q目录（有`CQP.exe`文件的目录）下创建`cqpy.py`文件，内容如下：
 
 ```python
@@ -28,7 +30,61 @@ def on_enable():
 
 在酷Q里启用插件，即可看到日志里输出了一行`Hello world!`。
 
-embed模块提供了下列api。
+提供的事件回调如下：
+
+```python
+# 生命周期回调
+
+def on_enable() -> int:
+    return 0
+
+def on_disable() -> int:
+    return 0
+
+# 消息事件
+
+def on_private_msg(sub_type: int, msg_id: int, from_qq: int, msg: bytes, font: int) -> int:
+    return 0
+
+def on_group_msg(sub_type: int, msg_id: int, from_group: int, from_qq: int, from_anonymous_base64: bytes, msg: bytes, font: int) -> int:
+    return 0
+
+def on_discuss_msg(sub_type: int, msg_id: int, from_discuss: int, from_qq: int, msg: bytes, font: int) -> int:
+    return 0
+
+# 群组事件
+
+def on_group_upload(sub_type: int, send_time: int, from_group: int, from_qq: int, file_base64: bytes) -> int:
+    return 0
+
+def on_group_admin(sub_type: int, send_time: int, from_group: int, being_operate_qq: int) -> int:
+    return 0
+
+def on_group_member_decrease(sub_type: int, send_time: int, from_group: int, being_operate_qq: int) -> int:
+    return 0
+
+def on_group_member_increase(sub_type: int, send_time: int, from_group: int, being_operate_qq: int) -> int:
+    return 0
+
+def on_group_ban(sub_type: int, send_time: int, from_group: int, from_qq: int, being_operate_qq: int, duration: int) -> int:
+    return 0
+
+# 通知事件
+
+def on_friend_add(sub_type: int, send_time: int, from_qq: int) -> int:
+    return 0
+
+# 请求
+
+def on_friend_request(sub_type: int, send_time: int, from_qq: int, msg: bytes, response_flag: bytes) -> int:
+    return 0
+
+def on_group_request(sub_type: int, send_time: int, from_group: int, from_qq: int, msg: bytes, response_flag: bytes) -> int:
+    return 0
+
+```
+
+`embed`模块提供的接口如下：
 
 ```python
 # internal
