@@ -1,5 +1,18 @@
 #include "events.hpp"
 #include "cqapi.hpp"
+#include "cqpy.hpp"
+
+#define CQPY_EVENT_CALLBACK(ReturnType, callback, ...)                 \
+    try                                                                \
+    {                                                                  \
+        auto m = py::module::import("cqpy");                           \
+        return m.attr(#callback).call(__VA_ARGS__).cast<ReturnType>(); \
+    }                                                                  \
+    catch (const py::error_already_set &e)                             \
+    {                                                                  \
+        CQ_addLog(AUTH_CODE, 30, "CQPy", e.what());                    \
+        return -1;                                                     \
+    }
 
 #pragma region LifeCycle
 
@@ -20,14 +33,16 @@ CQ_EVENT(int32_t, Initialize, 4, int32_t auth_code)
 // 启用插件
 CQ_EVENT(int32_t, cq_event_enable, 0)
 {
-    CQ_addLog(AUTH_CODE, 10, "Log", "Hello world");
-    return 0;
+    py::initialize_interpreter();
+
+    CQPY_EVENT_CALLBACK(int32_t, on_enable)
 }
 
 // 禁用插件
 CQ_EVENT(int32_t, cq_event_disable, 0)
 {
-    return 0;
+    CQPY_EVENT_CALLBACK(int32_t, on_disable)
+    py::finalize_interpreter();
 }
 
 // 酷Q启动
@@ -50,17 +65,17 @@ CQ_EVENT(int32_t, cq_event_coolq_exit, 0)
  * Type=21 私聊消息
  * sub_type 子类型，11/来自好友 1/来自在线状态 2/来自群 3/来自讨论组
  */
-CQ_EVENT(int32_t, cq_event_private_message, 24, int32_t sub_type, int32_t msg_id, int64_t from_qq, const char *msg, int32_t font)
-{
-    return 0;
+CQ_EVENT(int32_t, cq_event_private_message, 24, int32_t sub_type, int32_t msg_id, int64_t from_qq, const char *msg, int32_t font){
+    CQPY_EVENT_CALLBACK(int32_t, on_private_msg, sub_type, msg_id, from_qq, py::bytes(msg), font)
+
 }
 
 /**
  * Type=2 群消息
  */
-CQ_EVENT(int32_t, cq_event_group_message, 36, int32_t sub_type, int32_t msg_id, int64_t from_group, int64_t from_qq, const char *from_anonymous_base64, const char *msg, int32_t font)
-{
-    return 0;
+CQ_EVENT(int32_t, cq_event_group_message, 36, int32_t sub_type, int32_t msg_id, int64_t from_group, int64_t from_qq, const char *from_anonymous_base64, const char *msg, int32_t font){
+    CQPY_EVENT_CALLBACK(int32_t, on_group_msg, sub_type, msg_id, from_group, from_qq, py::bytes(from_anonymous_base64), py::bytes(msg), font)
+
 }
 
 /**
@@ -68,7 +83,7 @@ CQ_EVENT(int32_t, cq_event_group_message, 36, int32_t sub_type, int32_t msg_id, 
  */
 CQ_EVENT(int32_t, cq_event_discuss_message, 32, int32_t sub_type, int32_t msg_id, int64_t from_discuss, int64_t from_qq, const char *msg, int32_t font)
 {
-    return 0;
+    CQPY_EVENT_CALLBACK(int32_t, on_discuss_msg, sub_type, msg_id, from_discuss, from_qq, py::bytes(msg), font)
 }
 
 #pragma endregion
@@ -78,18 +93,18 @@ CQ_EVENT(int32_t, cq_event_discuss_message, 32, int32_t sub_type, int32_t msg_id
 /**
  * Type=11 群事件-文件上传
  */
-CQ_EVENT(int32_t, cq_event_group_upload, 28, int32_t sub_type, int32_t send_time, int64_t from_group, int64_t from_qq, const char *file_base64)
-{
-    return 0;
+CQ_EVENT(int32_t, cq_event_group_upload, 28, int32_t sub_type, int32_t send_time, int64_t from_group, int64_t from_qq, const char *file_base64){
+    CQPY_EVENT_CALLBACK(int32_t, on_group_upload, sub_type, send_time, from_group, from_qq, py::bytes(file_base64))
+
 }
 
 /**
  * Type=101 群事件-管理员变动
  * sub_type 子类型，1/被取消管理员 2/被设置管理员
  */
-CQ_EVENT(int32_t, cq_event_group_admin, 24, int32_t sub_type, int32_t send_time, int64_t from_group, int64_t being_operate_qq)
-{
-    return 0;
+CQ_EVENT(int32_t, cq_event_group_admin, 24, int32_t sub_type, int32_t send_time, int64_t from_group, int64_t being_operate_qq){
+    CQPY_EVENT_CALLBACK(int32_t, on_group_admin, sub_type, send_time, from_group, being_operate_qq)
+
 }
 
 /**
@@ -98,9 +113,9 @@ CQ_EVENT(int32_t, cq_event_group_admin, 24, int32_t sub_type, int32_t send_time,
  * from_qq 操作者QQ(仅subType为2、3时存在)
  * being_operate_qq 被操作QQ
  */
-CQ_EVENT(int32_t, cq_event_group_member_decrease, 32, int32_t sub_type, int32_t send_time, int64_t from_group, int64_t from_qq, int64_t being_operate_qq)
-{
-    return 0;
+CQ_EVENT(int32_t, cq_event_group_member_decrease, 32, int32_t sub_type, int32_t send_time, int64_t from_group, int64_t from_qq, int64_t being_operate_qq){
+    CQPY_EVENT_CALLBACK(int32_t, on_group_member_decrease, sub_type, send_time, from_group, from_qq, being_operate_qq)
+
 }
 
 /**
@@ -109,9 +124,9 @@ CQ_EVENT(int32_t, cq_event_group_member_decrease, 32, int32_t sub_type, int32_t 
  * from_qq 操作者QQ(即管理员QQ)
  * being_operate_qq 被操作QQ(即加群的QQ)
  */
-CQ_EVENT(int32_t, cq_event_group_member_increase, 32, int32_t sub_type, int32_t send_time, int64_t from_group, int64_t from_qq, int64_t being_operate_qq)
-{
-    return 0;
+CQ_EVENT(int32_t, cq_event_group_member_increase, 32, int32_t sub_type, int32_t send_time, int64_t from_group, int64_t from_qq, int64_t being_operate_qq){
+    CQPY_EVENT_CALLBACK(int32_t, on_group_member_increase, sub_type, send_time, from_group, from_qq, being_operate_qq)
+
 }
 
 /**
@@ -124,7 +139,7 @@ CQ_EVENT(int32_t, cq_event_group_member_increase, 32, int32_t sub_type, int32_t 
  */
 CQ_EVENT(int32_t, cq_event_group_ban, 40, int32_t sub_type, int32_t send_time, int64_t from_group, int64_t from_qq, int64_t being_operate_qq, int64_t duration)
 {
-    return 0;
+    CQPY_EVENT_CALLBACK(int32_t, on_group_ban, sub_type, send_time, from_group, from_qq, being_operate_qq, duration)
 }
 
 #pragma endregion
@@ -136,7 +151,7 @@ CQ_EVENT(int32_t, cq_event_group_ban, 40, int32_t sub_type, int32_t send_time, i
  */
 CQ_EVENT(int32_t, cq_event_friend_add, 16, int32_t sub_type, int32_t send_time, int64_t from_qq)
 {
-    return 0;
+    CQPY_EVENT_CALLBACK(int32_t, on_friend_add, sub_type, send_time, from_qq)
 }
 
 #pragma endregion
@@ -148,9 +163,9 @@ CQ_EVENT(int32_t, cq_event_friend_add, 16, int32_t sub_type, int32_t send_time, 
  * msg 附言
  * response_flag 反馈标识(处理请求用)
  */
-CQ_EVENT(int32_t, cq_event_friend_request, 24, int32_t sub_type, int32_t send_time, int64_t from_qq, const char *msg, const char *response_flag)
-{
-    return 0;
+CQ_EVENT(int32_t, cq_event_friend_request, 24, int32_t sub_type, int32_t send_time, int64_t from_qq, const char *msg, const char *response_flag){
+    CQPY_EVENT_CALLBACK(int32_t, on_friend_request, sub_type, send_time, from_qq, py::bytes(msg), py::bytes(response_flag))
+
 }
 
 /**
@@ -161,7 +176,7 @@ CQ_EVENT(int32_t, cq_event_friend_request, 24, int32_t sub_type, int32_t send_ti
  */
 CQ_EVENT(int32_t, cq_event_group_request, 32, int32_t sub_type, int32_t send_time, int64_t from_group, int64_t from_qq, const char *msg, const char *response_flag)
 {
-    return 0;
+    CQPY_EVENT_CALLBACK(int32_t, on_group_request, sub_type, send_time, from_group, from_qq, py::bytes(msg), py::bytes(response_flag))
 }
 
 #pragma endregion
