@@ -1,8 +1,9 @@
-$projectDir = Split-Path $PSScriptRoot -Parent
+ï»¿$projectDir = Split-Path $PSScriptRoot -Parent
 
 $appId = "top.weak-ptr.cqpy"
-$coolqRoot = "C:\Users\weakptr\AppData\Roaming\¿áQ Pro"
-$appOutDir = "${ProjectDir}\build"
+$coolqRoot = "C:\Users\weakptr\AppData\Roaming\é…·Q Pro"
+# $appOutDir = "${ProjectDir}\out\build\x86-Debug\"
+$appOutDir = "${ProjectDir}\build\Debug\"
 
 $coolqAppDevDir = "$coolqRoot\dev\$appId"
 $dllName = "${appId}.dll"
@@ -10,8 +11,17 @@ $dllPath = "$appOutDir\$dllName"
 $jsonName = "app.json"
 $jsonPath = "$projectDir\$jsonName"
 
-Write-Host "¸´ÖÆÎÄ¼şµ½¿áQ¿ª·¢Ä¿Â¼ ${coolqAppDevDir}"
+$cqpyPackage = "$coolqRoot\data\app\$appId\cqpy"
+Write-Host "ä»æ•°æ®ç›®å½•åˆ é™¤ cqpy åº“ $cqpyPackage"
+Remove-Item -Force -Recurse $cqpyPackage -ErrorAction SilentlyContinue
+Write-Host "åˆ é™¤å®Œæ¯•" -ForegroundColor Green
+
+Write-Host "å¤åˆ¶ cqpy åˆ°æ•°æ®ç›®å½• $cqpyPackage"
+Copy-Item -Recurse -Force "$projectDir\cqpy" $cqpyPackage
+Write-Host "å¤åˆ¶å®Œæ¯•" -ForegroundColor Green
+
+Write-Host "å¤åˆ¶æ„å»ºæ–‡ä»¶åˆ°é…·Q ç›®å½• ${coolqAppDevDir}"
 New-Item -Path $coolqAppDevDir -ItemType Directory -ErrorAction SilentlyContinue
 Copy-Item -Force $dllPath "$coolqAppDevDir\app.dll"
 Copy-Item -Force $jsonPath "$coolqAppDevDir\$jsonName"
-Write-Host "¸´ÖÆÍê³É" -ForegroundColor Green
+Write-Host "å¤åˆ¶å®Œæˆ" -ForegroundColor Green

@@ -4,7 +4,7 @@
 
 #define CQPY_API(ReturnType, CQ_API, PY_API, ...) m.def(#PY_API, std::function<ReturnType __stdcall(__VA_ARGS__)>(CQ_API))
 
-PYBIND11_EMBEDDED_MODULE(embed, m)
+PYBIND11_EMBEDDED_MODULE(_embed, m)
 {
     // provide authcode to embed module
     m.def("get_auth_code", []() {

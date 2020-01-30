@@ -1,5 +1,4 @@
-cmake_minimum_required(VERSION 3.14)
-set(PROJECT_NAME top.weak-ptr.cqpy)
+cmake_minimum_required(VERSION 3.15)
 project(top.weak-ptr.cqpy LANGUAGES CXX VERSION 0.1.0)
 
 include_directories(src)
@@ -11,10 +10,12 @@ add_compile_definitions(APP_ID="${PROJECT_NAME}")
 add_compile_options(/utf-8)
 add_definitions(-DAPP_ID="top.weak-ptr.cqpy" -DNOMINMAX)
 
+# 设置静态链接
+set(VCPKG_CRT_LINKAGE STATIC)
+set(VCPKG_LIBRARY_LINKAGE STATIC)
+
 # 引入 pybind11
-find_package(pybind11 REQUIRED)
-include_directories(${PYBIND11_INCLUDE_DIRS})
-link_directories(${PYBIND11_LIBRARY_DIRS})
+find_package(pybind11 CONFIG REQUIRED)
 
 # 添加 target
 add_library(${PROJECT_NAME} SHARED ${SOURCES})

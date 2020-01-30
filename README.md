@@ -2,10 +2,6 @@
 
 轻量级的酷Q Python插件，支持运行指定的 Python 模块。
 
-<del>原本是这么想的...</del>
-
-总之，现在是一个最简的酷Q API包装，基本什么都没有，可以随意往里面添加东西。
-
 ## requirements
 
 首先你需要一个`Visual Studio 2019`和`CMake`，然后我推荐使用vcpkg来安装相关依赖。
@@ -14,6 +10,12 @@
 
 - `pybind11`
 
+安装方式：
+
+```batch
+vcpkg install pybind11:x86-windows
+```
+
 ## Usage
 
 > SDK 还在 WIP 的状态，需要做基础的 Python 封装才比较方便使用(字符串解码、base64解码、json解码、回调注册)，欢迎提 PR。
@@ -21,10 +23,10 @@
 在酷Q目录（有`CQP.exe`文件的目录）下创建`cqpy.py`文件，内容如下：
 
 ```python
-import embed
+import _embed
 
 def on_enable():
-    embed.cq_add_log(embed.get_auth_code(), 10, "py", "Hello world!")
+    _embed.cq_add_log(embed.get_auth_code(), 10, "py", "Hello world!")
     return 0
 ```
 
@@ -84,7 +86,7 @@ def on_group_request(sub_type: int, send_time: int, from_group: int, from_qq: in
 
 ```
 
-`embed`模块提供的接口如下：
+`_embed`模块提供的接口如下：
 
 ```python
 # internal
@@ -155,8 +157,9 @@ def cq_set_restart(auth_code: int) -> int: ...
 ```batch
 cd /path/to/CQPy
 mkdir build
-cmake . -B build
-cmake --build build
+cd build
+cmake .. -AWin32 -DCMAKE_TOOLCHAIN_FILE=/path/to/your/vcpkg/scripts/buildsystems/vcpkg.cmake
+cmake --build .
 ```
 
 完成后即可在`酷Q Pro\dev\你的AppID\`下看到`app.dll`和`app.json`两个文件了。
