@@ -1,5 +1,6 @@
 # internal
-def get_auth_code(auth_code: int) -> int: ...
+APP_ID: bytes
+AUTH_CODE: int
 
 # Message
 def cq_send_private_msg(auth_code: int, qq: int, msg: bytes) -> int: ...

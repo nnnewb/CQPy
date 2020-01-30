@@ -5,17 +5,17 @@
 
 using namespace cqpy;
 
-template<typename... Args>
-inline int32_t cqpy_event_callback(const std::string& py_func, Args... args)
+template <typename... Args>
+inline int32_t cqpy_event_callback(const std::string &py_func, Args... args)
 {
 	try
 	{
 		auto m = py::module::import("cqpy._callback");
 		return m.attr(py_func.c_str())(args...).cast<int32_t>();
 	}
-	catch (const py::error_already_set & e)
+	catch (const py::error_already_set &e)
 	{
-		cqpy::logging::error(e.what());
+		logging::error(e.what());
 		return -1;
 	}
 }
@@ -23,7 +23,7 @@ inline int32_t cqpy_event_callback(const std::string& py_func, Args... args)
 #pragma region LifeCycle
 
 // 返回 API 版本和 App ID
-CQ_EVENT(const char*, AppInfo, 0)
+CQ_EVENT(const char *, AppInfo, 0)
 {
 	return "9," APP_ID;
 }
@@ -33,31 +33,29 @@ CQ_EVENT(int32_t, Initialize, 4, int32_t auth_code)
 {
 	AUTH_CODE = auth_code;
 	cqapi_initialize();
-	// 设置 AUTH_CODE，但是暂时还不能使用酷Q的API
-	py::initialize_interpreter();
 	return 0;
 }
 
 // 启用插件
 CQ_EVENT(int32_t, cq_event_enable, 0)
 {
-	// 初始化 Python 解释器环境，清空 sys.path，把数据目录加入 python path
+	py::initialize_interpreter();
+	// 设置 AUTH_CODE，但是暂时还不能使用酷Q的API
+    auto _embed = py::module::import("_embed");
+    _embed.attr("AUTH_CODE") = AUTH_CODE;
+	// 初始化 Python 解释器环境，把数据目录加入 python path
 	auto raw_app_dir = std::string(CQ_getAppDirectory(AUTH_CODE));
 	auto app_dir = py::bytes(raw_app_dir).attr("decode")("gb18030").cast<py::str>();
 	auto sys = py::module::import("sys");
-	sys.attr("path").attr("clear")();
 	sys.attr("path").attr("append")(app_dir);
-	logging::info("Initialize python interpreter...");
-	logging::info(
-		std::string("find module `cqpy` in paths below here: \n") +
-		py::str("\n").attr("join")(sys.attr("path")).cast<std::string>()
-	);
+	logging::info("Python interpreter initialized.");
 	return cqpy_event_callback("on_enable");
 }
 
 // 禁用插件
 CQ_EVENT(int32_t, cq_event_disable, 0)
 {
+	py::finalize_interpreter();
 	return cqpy_event_callback("on_disable");
 }
 
@@ -81,21 +79,23 @@ CQ_EVENT(int32_t, cq_event_coolq_exit, 0)
  * Type=21 私聊消息
  * sub_type 子类型，11/来自好友 1/来自在线状态 2/来自群 3/来自讨论组
  */
-CQ_EVENT(int32_t, cq_event_private_message, 24, int32_t sub_type, int32_t msg_id, int64_t from_qq, const char* msg, int32_t font) {
+CQ_EVENT(int32_t, cq_event_private_message, 24, int32_t sub_type, int32_t msg_id, int64_t from_qq, const char *msg, int32_t font)
+{
 	return cqpy_event_callback("on_private_msg", sub_type, msg_id, from_qq, py::bytes(msg), font);
 }
 
 /**
  * Type=2 群消息
  */
-CQ_EVENT(int32_t, cq_event_group_message, 36, int32_t sub_type, int32_t msg_id, int64_t from_group, int64_t from_qq, const char* from_anonymous_base64, const char* msg, int32_t font) {
+CQ_EVENT(int32_t, cq_event_group_message, 36, int32_t sub_type, int32_t msg_id, int64_t from_group, int64_t from_qq, const char *from_anonymous_base64, const char *msg, int32_t font)
+{
 	return cqpy_event_callback("on_group_msg", sub_type, msg_id, from_group, from_qq, py::bytes(from_anonymous_base64), py::bytes(msg), font);
 }
 
 /**
  * Type=4 讨论组消息
  */
-CQ_EVENT(int32_t, cq_event_discuss_message, 32, int32_t sub_type, int32_t msg_id, int64_t from_discuss, int64_t from_qq, const char* msg, int32_t font)
+CQ_EVENT(int32_t, cq_event_discuss_message, 32, int32_t sub_type, int32_t msg_id, int64_t from_discuss, int64_t from_qq, const char *msg, int32_t font)
 {
 	return cqpy_event_callback("on_discuss_msg", sub_type, msg_id, from_discuss, from_qq, py::bytes(msg), font);
 }
@@ -107,7 +107,7 @@ CQ_EVENT(int32_t, cq_event_discuss_message, 32, int32_t sub_type, int32_t msg_id
 /**
  * Type=11 群事件-文件上传
  */
-CQ_EVENT(int32_t, cq_event_group_upload, 28, int32_t sub_type, int32_t send_time, int64_t from_group, int64_t from_qq, const char* file_base64)
+CQ_EVENT(int32_t, cq_event_group_upload, 28, int32_t sub_type, int32_t send_time, int64_t from_group, int64_t from_qq, const char *file_base64)
 {
 	return cqpy_event_callback("on_group_upload", sub_type, send_time, from_group, from_qq, py::bytes(file_base64));
 }
@@ -177,7 +177,7 @@ CQ_EVENT(int32_t, cq_event_friend_add, 16, int32_t sub_type, int32_t send_time, 
  * msg 附言
  * response_flag 反馈标识(处理请求用)
  */
-CQ_EVENT(int32_t, cq_event_friend_request, 24, int32_t sub_type, int32_t send_time, int64_t from_qq, const char* msg, const char* response_flag)
+CQ_EVENT(int32_t, cq_event_friend_request, 24, int32_t sub_type, int32_t send_time, int64_t from_qq, const char *msg, const char *response_flag)
 {
 	return cqpy_event_callback("on_friend_request", sub_type, send_time, from_qq, py::bytes(msg), py::bytes(response_flag));
 }
@@ -188,10 +188,9 @@ CQ_EVENT(int32_t, cq_event_friend_request, 24, int32_t sub_type, int32_t send_ti
  * msg 附言
  * response_flag 反馈标识(处理请求用)
  */
-CQ_EVENT(int32_t, cq_event_group_request, 32, int32_t sub_type, int32_t send_time, int64_t from_group, int64_t from_qq, const char* msg, const char* response_flag)
+CQ_EVENT(int32_t, cq_event_group_request, 32, int32_t sub_type, int32_t send_time, int64_t from_group, int64_t from_qq, const char *msg, const char *response_flag)
 {
 	return cqpy_event_callback("on_group_request", sub_type, send_time, from_group, from_qq, py::bytes(msg), py::bytes(response_flag));
 }
 
 #pragma endregion
-
