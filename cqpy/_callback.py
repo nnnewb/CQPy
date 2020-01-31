@@ -7,6 +7,7 @@ def on_enable() -> int:
 
 
 def on_disable() -> int:
+    raise Exception()
     return dispatch(Event(EventType.Disable))
 
 # 消息事件

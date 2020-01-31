@@ -39,7 +39,7 @@ callback_registry: Mapping[EventType, List] = {}
 
 
 def dispatch(event: Event):
-    cqp.add_log(10, cqp.APP_ID, f'处理事件 {event.event_type.name}')
+    cqp.add_log(0, __name__, f'python 模块收到事件 {event.event_type.name}')
     callbacks = callback_registry.get(event.event_type, [])
     try:
         for fn in callbacks:

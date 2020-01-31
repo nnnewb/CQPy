@@ -1,8 +1,11 @@
-#include "cqpy.hpp"
-#include "cqapi.hpp"
 #include <functional>
+#include <pybind11/embed.h>
+
+#include "cqapi.hpp"
 
 #define CQPY_API(ReturnType, CQ_API, PY_API, ...) m.def(#PY_API, std::function<ReturnType __stdcall(__VA_ARGS__)>(CQ_API))
+
+namespace py = pybind11;
 
 PYBIND11_EMBEDDED_MODULE(_embed, m)
 {

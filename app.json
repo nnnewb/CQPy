@@ -115,7 +115,11 @@
         }
     ],
     "menu": [ 
-        // name 字段为显示在酷Q应用菜单中的文字, function 字段对应 CQ_MENU 宏调用的参数
+        // name 字段为显示在酷Q应用菜单中的文字, function 字段对应调用的函数
+      {
+        "name": "打开settings.json",
+        "function": "open_settings"
+      }
     ],
     "status": [],
     "auth": [ 
