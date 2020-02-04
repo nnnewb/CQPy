@@ -7,6 +7,8 @@ from pkgutil import walk_packages
 
 from cqpy.cqp import get_app_directory
 
+settings = {}
+
 
 def import_recursive(name):
     modules = []
@@ -27,6 +29,7 @@ def _bootstrap():
 
     :return:
     """
+    global settings
     app_dir = get_app_directory()
     with open(join_path(app_dir, 'settings.json'), 'rb') as f:
         settings = load(f)
@@ -40,7 +43,7 @@ def _bootstrap():
     sys.path.extend(extras)
 
     # register callback functions
-    for load_name in settings.get('plugin', []):
+    for load_name in settings.get('plugins', []):
         import_recursive(load_name)
 
 
