@@ -1,11 +1,10 @@
+#include <cstdint>
 #include <functional>
 #include <pybind11/embed.h>
 
 #include "cqapi.hpp"
 
 namespace py = pybind11;
-
-auto f = std::function<void()>([](){});
 
 PYBIND11_EMBEDDED_MODULE(_embed, m)
 {
@@ -40,22 +39,61 @@ PYBIND11_EMBEDDED_MODULE(_embed, m)
 
 	// QQ Information
 	CQPY_API(int64_t, CQ_getLoginQQ, cq_get_login_qq, int32_t auth_code);
-	CQPY_API(const char*, CQ_getLoginNick, cq_get_login_nick, int32_t auth_code);
-	CQPY_API(const char*, CQ_getStrangerInfo, cq_get_stranger_info, int32_t auth_code, int64_t qq, cq_bool_t no_cache);
-	CQPY_API(const char*, CQ_getFriendList, cq_get_friend_list, int32_t auth_code, cq_bool_t reserved);
-	CQPY_API(const char*, CQ_getGroupList, cq_get_group_list, int32_t auth_code);
-	CQPY_API(const char*, CQ_getGroupInfo, cq_get_group_info, int32_t auth_code, int64_t group_id, cq_bool_t no_cache);
-	CQPY_API(const char*, CQ_getGroupMemberList, cq_get_group_member_list, int32_t auth_code, int64_t group_id);
-	CQPY_API(const char*, CQ_getGroupMemberInfoV2, cq_get_group_member_info_v2, int32_t auth_code, int64_t group_id, int64_t qq, cq_bool_t no_cache);
+    //	CQPY_API(const char*, CQ_getLoginNick, cq_get_login_nick, int32_t auth_code);
+    m.def("cq_get_login_nick", [](int32_t auth_code){
+        return py::bytes(CQ_getLoginNick(auth_code));
+    });
+    //	CQPY_API(const char*, CQ_getStrangerInfo, cq_get_stranger_info, int32_t auth_code, int64_t qq, cq_bool_t no_cache);
+    m.def("cq_get_stranger_info", [](int32_t auth_code, int64_t qq, cq_bool_t no_cache){
+        return py::bytes(CQ_getStrangerInfo(auth_code, qq, no_cache));
+    });
+    //	CQPY_API(const char*, CQ_getFriendList, cq_get_friend_list, int32_t auth_code, cq_bool_t reserved);
+    m.def("cq_get_friend_list", []( int32_t auth_code, cq_bool_t reserved){
+        return py::bytes(CQ_getFriendList(auth_code, reserved));
+    });
+    //	CQPY_API(const char*, CQ_getGroupList, cq_get_group_list, int32_t auth_code);
+    m.def("cq_get_group_list", []( int32_t auth_code){
+        return py::bytes(CQ_getGroupList(auth_code))    ;
+    });
+    //	CQPY_API(const char*, CQ_getGroupInfo, cq_get_group_info, int32_t auth_code, int64_t group_id, cq_bool_t no_cache);
+    m.def("cq_get_group_info",[](int32_t auth_code, int64_t group_id, cq_bool_t no_cache){
+        return py::bytes(CQ_getGroupInfo(auth_code, group_id, no_cache));
+    });
+    //	CQPY_API(const char*, CQ_getGroupMemberList, cq_get_group_member_list, int32_t auth_code, int64_t group_id);
+    m.def("cq_get_group_member_list", []( int32_t auth_code, int64_t group_id){
+        return py::bytes(CQ_getGroupMemberList(auth_code, group_id));
+    });
+    //	CQPY_API(const char*, CQ_getGroupMemberInfoV2, cq_get_group_member_info_v2, int32_t auth_code, int64_t group_id, int64_t qq, cq_bool_t no_cache);
+    m.def("cq_get_group_member_info_v2", [](int32_t auth_code, int64_t group_id, int64_t qq, cq_bool_t no_cache){
+        return py::bytes(CQ_getGroupMemberInfoV2(auth_code, group_id, qq, no_cache));
+    });
 
 	// CoolQ
-	CQPY_API(const char*, CQ_getCookies, cq_get_cookies, int32_t auth_code);
-	CQPY_API(const char*, CQ_getCookiesV2, cq_get_cookies_v2, int32_t auth_code, const char* domain);
+    //	CQPY_API(const char*, CQ_getCookies, cq_get_cookies, int32_t auth_code);
+    m.def("cq_get_cookies", [](int32_t auth_code){
+        return py::bytes(CQ_getCookies(auth_code));
+    });
+    //	CQPY_API(const char*, CQ_getCookiesV2, cq_get_cookies_v2, int32_t auth_code, const char* domain);
+    m.def("cq_get_cookies_v2", [](int32_t auth_code,const char* domain){
+        return py::bytes(CQ_getCookiesV2(auth_code,domain));
+    });
 	CQPY_API(int32_t, CQ_getCsrfToken, cq_get_csrf_token, int32_t auth_code);
-	CQPY_API(const char*, CQ_getAppDirectory, cq_get_app_directory, int32_t auth_code);
-	CQPY_API(const char*, CQ_getRecord, cq_get_record, int32_t auth_code, const char* file, const char* out_format);
-	CQPY_API(const char*, CQ_getRecordV2, cq_get_record_v2, int32_t auth_code, const char* file, const char* out_format);
-	CQPY_API(const char*, CQ_getImage, cq_get_image, int32_t auth_code, const char* file);
+    //	CQPY_API(const char*, CQ_getAppDirectory, cq_get_app_directory, int32_t auth_code);
+    m.def("cq_get_app_directory", [](int32_t auth_code){
+        return py::bytes(CQ_getAppDirectory(auth_code));
+    });
+    //	CQPY_API(const char*, CQ_getRecord, cq_get_record, int32_t auth_code, const char* file, const char* out_format);
+    m.def("cq_get_record", [](int32_t auth_code, const char* file, const char* out_format){
+        return py::bytes(CQ_getRecord(auth_code, file, out_format));
+    });
+    //	CQPY_API(const char*, CQ_getRecordV2, cq_get_record_v2, int32_t auth_code, const char* file, const char* out_format);
+    m.def("cq_get_record_v2", [](int32_t auth_code, const char* file, const char* out_format){
+        return py::bytes(CQ_getRecordV2(auth_code, file, out_format));
+    });
+    //	CQPY_API(const char*, CQ_getImage, cq_get_image, int32_t auth_code, const char* file);
+    m.def("cq_get_image",[](int32_t auth_code, const char* file){
+        return py::bytes(CQ_getImage(auth_code, file));
+    });
 	CQPY_API(int, CQ_canSendImage, cq_can_send_image, int32_t auth_code);
 	CQPY_API(int, CQ_canSendRecord, cq_can_send_record, int32_t auth_code);
 	CQPY_API(int32_t, CQ_addLog, cq_add_log, int32_t auth_code, int32_t log_level, const char* category, const char* log_msg);

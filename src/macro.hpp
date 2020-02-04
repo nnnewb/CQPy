@@ -1,6 +1,5 @@
 #pragma once
 
-#include <functional>
 #define DLL_EXPORT extern "C" __declspec(dllexport)
 
 #define CQ_IMPORT_API(ReturnType, FuncName, ...)                                                             \

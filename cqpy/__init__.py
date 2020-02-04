@@ -1,6 +1,6 @@
 import sys
 from importlib import import_module
-from json import loads
+from json import load
 from os import environ
 from os.path import join as join_path
 from pkgutil import walk_packages
@@ -28,7 +28,8 @@ def _bootstrap():
     :return:
     """
     app_dir = get_app_directory()
-    settings = loads(join_path(app_dir, 'settings.json'))
+    with open(join_path(app_dir, 'settings.json'), 'rb') as f:
+        settings = load(f)
 
     env = settings.get('virtualenv', '')
     if env:
