@@ -14,7 +14,7 @@ inline int32_t cqpy_event_callback(const std::string &py_func, Args... args)
 	try
 	{
 		auto m = py::module::import("cqpy._callback");
-		return m.attr(py_func.c_str())(args...).cast<int32_t>();
+		return m.attr(py_func.c_str())(args...).template cast<int32_t>();
 	}
 	catch (const py::error_already_set &e)
 	{

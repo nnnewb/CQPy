@@ -17,7 +17,7 @@ CQ_EXPORT(int32_t, open_settings, 0)
 	{
 		auto of = std::ofstream(settings_path);
 		of << "{}" << std::endl;
-		logging::debug("settings.json ²»´æÔÚ£¬´´½¨Ö®¡£");
+		logging::debug("settings.json ä¸å­˜åœ¨ï¼ŒçŽ°åœ¨åˆ›å»ºã€‚");
 	}
 
 	ShellExecute(nullptr, nullptr, settings_path.c_str(), nullptr, nullptr, SW_SHOWNORMAL);

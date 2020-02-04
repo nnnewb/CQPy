@@ -7,26 +7,46 @@ set(CMAKE_CXX_STANDARD 17)
 
 # 添加编译参数
 add_compile_definitions(APP_ID="${PROJECT_NAME}")
-add_compile_options(/utf-8)
-add_definitions(-DAPP_ID="top.weak-ptr.cqpy" -DNOMINMAX)
+add_definitions(-DAPP_ID="top.weak-ptr.cqpy")
+if (MSVC)
+    add_compile_options(/utf-8)
+    add_definitions(-DNOMINMAX)
 
-# 设置静态链接
-set(VCPKG_CRT_LINKAGE STATIC)
-set(VCPKG_LIBRARY_LINKAGE STATIC)
+    # 设置静态链接
+    set(VCPKG_CRT_LINKAGE STATIC)
+    set(VCPKG_LIBRARY_LINKAGE STATIC)
+else ()
+    add_link_options(-static -Wl,--kill-at,--enable-stdcall-fixup)
+endif (MSVC)
 
 # 引入 pybind11
 find_package(pybind11 CONFIG REQUIRED)
 
 # 添加 target
-add_library(${PROJECT_NAME} SHARED ${SOURCES})
-set_target_properties(${PROJECT_NAME} PROPERTIES LINKER_LANGUAGE CXX)
-target_link_libraries(${PROJECT_NAME} PRIVATE pybind11::embed)
+set(OUT_NAME "app")
+add_library(${OUT_NAME} SHARED ${SOURCES})
+set_target_properties(${OUT_NAME} PROPERTIES LINKER_LANGUAGE CXX)
+target_link_libraries(${OUT_NAME} PRIVATE pybind11::embed)
 
 # 添加安装脚本, 将在指定构建目标构建完成后运行, 可用于拷贝 app.dll 和 app.json 到酷Q应用目录
-set(INSTALL_SCRIPT "${PROJECT_SOURCE_DIR}/scripts/install.ps1")
-if(EXISTS ${INSTALL_SCRIPT})
-    add_custom_command(TARGET ${PROJECT_NAME}
-                        POST_BUILD
-                        COMMAND
-                        powershell -ExecutionPolicy Bypass -NoProfile -File ${INSTALL_SCRIPT} "$<TARGET_FILE_DIR:${PROJECT_NAME}>")
-endif()
+set(ACTUAL_SHARED_OUTPUT "${CMAKE_BINARY_DIR}/app.dll")
+if (NOT MSVC)
+    add_custom_command(TARGET ${OUT_NAME} POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_BINARY_DIR}/libapp.dll ${ACTUAL_SHARED_OUTPUT})
+endif ()
+
+if (MSVC)
+    install(
+            TARGETS ${OUT_NAME}
+            RUNTIME DESTINATION "${CMAKE_INSTALL_PREFIX}/dev/${PROJECT_NAME}"
+    )
+else ()
+    install(FILES ${ACTUAL_SHARED_OUTPUT} DESTINATION "${CMAKE_INSTALL_PREFIX}/dev/${PROJECT_NAME}")
+endif ()
+
+install(
+        FILES "app.json" DESTINATION "${CMAKE_INSTALL_PREFIX}/dev/${PROJECT_NAME}"
+)
+install(
+        DIRECTORY "cqpy" DESTINATION "${CMAKE_INSTALL_PREFIX}/data/app/${PROJECT_NAME}"
+)
