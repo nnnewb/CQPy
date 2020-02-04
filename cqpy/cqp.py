@@ -1,9 +1,13 @@
 # _embed is special module embedding in top.weak-ptr.cqpy plugin
-import _embed
+try:
+    import _embed
+except ImportError:
+    raise RuntimeError('CQPy only run within top.weak-ptr.cqpy CoolQ plugin.')
 
 # internal
 AUTH_CODE: int = _embed.AUTH_CODE
 APP_ID: str = _embed.APP_ID.decode('gb18030')
+
 
 # Message
 
@@ -23,6 +27,7 @@ def send_discuss_msg(discuss_id: int, msg: str) -> int:
 def delete_msg(msg_id: int) -> int:
     return _embed.cq_delete_msg(AUTH_CODE, msg_id)
 
+
 # friend operation
 
 
@@ -32,6 +37,7 @@ def send_like(qq: int) -> int:
 
 def send_like_v2(qq: int) -> int:
     return _embed.cq_send_like_v2(AUTH_CODE, qq)
+
 
 # group operation
 
@@ -75,11 +81,13 @@ def set_group_special_title(group_id: int, qq: int, new_special_title: str, dura
 def set_discuss_leave(discuss_id: int) -> int:
     return _embed.cq_set_discuss_leave(AUTH_CODE, discuss_id)
 
+
 # request
 
 
 def set_friend_add_request(response_flag: str, response_operation: int, remark: str) -> int:
-    return _embed.cq_set_friend_add_request(response_flag.encode('gb18030'), response_operation, remark.encode('gb18030'))
+    return _embed.cq_set_friend_add_request(response_flag.encode('gb18030'), response_operation,
+                                            remark.encode('gb18030'))
 
 
 def set_group_add_request(response_flag: str, request_type: int, response_operation: int) -> int:
@@ -87,7 +95,8 @@ def set_group_add_request(response_flag: str, request_type: int, response_operat
 
 
 def set_group_add_request_v2(response_flag: str, request_type: int, response_operation: int, reason: str) -> int:
-    return _embed.cq_set_group_add_request_v2(AUTH_CODE, response_flag.encode('gb18030'), request_type, response_operation, reason.encode('gb18030'))
+    return _embed.cq_set_group_add_request_v2(AUTH_CODE, response_flag.encode('gb18030'), request_type,
+                                              response_operation, reason.encode('gb18030'))
 
 
 # QQ Information
@@ -123,6 +132,7 @@ def get_group_member_list(group_id: int) -> str:
 
 def get_group_member_info_v2(group_id: int, qq: int, no_cache: int) -> str:
     return _embed.cq_get_group_member_info_v2(AUTH_CODE, group_id, qq, no_cache).decode('gb18030')
+
 
 # CoolQ
 
