@@ -2,7 +2,7 @@
     "ret": 1,
     "apiver": 9,
     "name": "CQPy",
-    "version": "1.0.0",
+    "version": "0.1.1",
     "version_id": 1,
     "author": "weak_ptr",
     "description": "简单轻量的酷Q Python 插件。",

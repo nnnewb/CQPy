@@ -1,0 +1,2 @@
+include LICENSE README.md _embed.pyi
+recursive-include cqpy *.py
