@@ -1,5 +1,5 @@
-from cqpy.events import on, EventType, Event
 from cqpy import settings, cqp
+from cqpy.events import on, EventType, Event
 
 
 @on(EventType.Enable)
@@ -36,6 +36,13 @@ def on_group_message(event: Event):
         REPEAT_MODE = True
         cqp.add_log(10, __name__, '复读开始！')
         cqp.send_group_msg(event.event_args['from_group'], '复读开始！')
+        return
+
+    elif event.event_args['from_qq'] == settings['master'] and '复读结束' in event.event_args['msg']:
+        REPEAT_MODE = False
+        cqp.add_log(10, __name__, '复读结束！')
+        cqp.send_group_msg(event.event_args['from_group'], '复读结束！')
+        return
 
     if REPEAT_MODE is True:
         cqp.send_group_msg(event.event_args['from_group'], event.event_args['msg'])

@@ -1,4 +1,9 @@
 # _embed is special module embedding in top.weak-ptr.cqpy plugin
+from base64 import b64decode
+from typing import List
+
+from cqpy.types import BinPack, GroupMemberInfo, GroupInfo, ListedGroupInfo, FriendInfo, UserInfo
+
 try:
     import _embed
 except ImportError:
@@ -111,27 +116,39 @@ def get_login_nick() -> str:
 
 
 def get_stranger_info(qq: int, no_cache: int) -> str:
-    return _embed.cq_get_stranger_info(AUTH_CODE, qq, no_cache).decode('gb18030')
+    ret_buf = _embed.cq_get_stranger_info(AUTH_CODE, qq, no_cache).decode('gb18030')
+    bin_pack = BinPack(b64decode(ret_buf))
+    return bin_pack.to_object(UserInfo)
 
 
 def get_friend_list(reserved: int) -> str:
-    return _embed.cq_get_friend_list(AUTH_CODE, reserved).decode('gb18030')
+    ret_buf = _embed.cq_get_friend_list(AUTH_CODE, reserved).decode('gb18030')
+    bin_pack = BinPack(b64decode(ret_buf))
+    return bin_pack.to_multi_object(FriendInfo)
 
 
-def get_group_list() -> str:
-    return _embed.cq_get_group_list(AUTH_CODE).decode('gb18030')
+def get_group_list() -> List[ListedGroupInfo]:
+    ret_buf = _embed.cq_get_group_list(AUTH_CODE).decode('gb18030')
+    bin_pack = BinPack(b64decode(ret_buf))
+    return bin_pack.to_multi_object(ListedGroupInfo)
 
 
-def get_group_info(group_id: int, no_cache: int) -> str:
-    return _embed.cq_get_group_info(AUTH_CODE, group_id, no_cache).decode('gb18030')
+def get_group_info(group_id: int, no_cache: int) -> GroupInfo:
+    ret_buf = _embed.cq_get_group_info(AUTH_CODE, group_id, no_cache).decode('gb18030')
+    bin_pack = BinPack(b64decode(ret_buf))
+    return bin_pack.to_object(GroupInfo)
 
 
-def get_group_member_list(group_id: int) -> str:
-    return _embed.cq_get_group_member_list(AUTH_CODE, group_id).decode('gb18030')
+def get_group_member_list(group_id: int) -> List[GroupMemberInfo]:
+    ret_buf = _embed.cq_get_group_member_list(AUTH_CODE, group_id).decode('gb18030')
+    bin_pack = BinPack(b64decode(ret_buf))
+    return bin_pack.to_multi_object(GroupMemberInfo)
 
 
-def get_group_member_info_v2(group_id: int, qq: int, no_cache: int) -> str:
-    return _embed.cq_get_group_member_info_v2(AUTH_CODE, group_id, qq, no_cache).decode('gb18030')
+def get_group_member_info_v2(group_id: int, qq: int, no_cache: int) -> GroupMemberInfo:
+    ret_buf = _embed.cq_get_group_member_info_v2(AUTH_CODE, group_id, qq, no_cache).decode('gb18030')
+    bin_pack = BinPack(b64decode(ret_buf))
+    return bin_pack.to_object(GroupMemberInfo)
 
 
 # CoolQ

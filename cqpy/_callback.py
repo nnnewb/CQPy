@@ -80,25 +80,27 @@ def on_group_admin(sub_type: int, send_time: int, from_group: int, being_operate
     )
 
 
-def on_group_member_decrease(sub_type: int, send_time: int, from_group: int, being_operate_qq: int) -> int:
+def on_group_member_decrease(sub_type: int, send_time: int, from_group: int, from_qq: int, being_operate_qq: int) -> int:
     return dispatch(
         Event(
             EventType.GroupMemberDecrease,
             sub_type=sub_type,
             send_time=send_time,
             from_group=from_group,
+            from_qq=from_qq,
             being_operate_qq=being_operate_qq,
         )
     )
 
 
-def on_group_member_increase(sub_type: int, send_time: int, from_group: int, being_operate_qq: int) -> int:
+def on_group_member_increase(sub_type: int, send_time: int, from_group: int, from_qq: int, being_operate_qq: int) -> int:
     return dispatch(
         Event(
             EventType.GroupMemberIncrease,
             sub_type=sub_type,
             send_time=send_time,
             from_group=from_group,
+            from_qq=from_qq,
             being_operate_qq=being_operate_qq,
         )
     )
