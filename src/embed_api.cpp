@@ -2,7 +2,7 @@
 #include <functional>
 #include <pybind11/embed.h>
 
-#include "cqapi.hpp"
+#include "api.hpp"
 
 namespace py = pybind11;
 

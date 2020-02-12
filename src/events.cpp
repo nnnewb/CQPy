@@ -2,7 +2,7 @@
 #include <mutex>
 #include <pybind11/embed.h>
 
-#include "cqapi.hpp"
+#include "api.hpp"
 #include "logging.hpp"
 #include "macro.hpp"
 
