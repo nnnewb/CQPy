@@ -1,2 +1,2 @@
-include LICENSE README.md _embed.pyi
+include LICENSE README.md CQP.pyi
 recursive-include cqpy *.py

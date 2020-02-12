@@ -40,8 +40,8 @@ CQ_EXPORT(int32_t, Initialize, 4, int32_t auth_code) {
 CQ_EXPORT(int32_t, cq_event_enable, 0) {
     py::initialize_interpreter();
     // 设置 AUTH_CODE，但是暂时还不能使用酷Q的API
-    auto _embed = py::module::import("_embed");
-    _embed.attr("AUTH_CODE") = AUTH_CODE;
+    auto CQP = py::module::import("CQP");
+    CQP.attr("AUTH_CODE") = AUTH_CODE;
     // 初始化 Python 解释器环境，把数据目录加入 python path
     auto raw_app_dir = std::string(CQ_getAppDirectory(AUTH_CODE));
     auto app_dir =
