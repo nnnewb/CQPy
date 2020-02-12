@@ -2,6 +2,15 @@
 #include <functional>
 #include <vector>
 
+#define CQ_IMPORT_API(ReturnType, FuncName, ...)                     \
+    typedef ReturnType(__stdcall *__CQ_##FuncName##_T)(__VA_ARGS__); \
+    __CQ_##FuncName##_T CQ_##FuncName;                               \
+    static bool __CQ_API_##FuncName##_REGISTERED =                   \
+        add_initializer([](auto dll) {                               \
+            CQ_##FuncName = reinterpret_cast<__CQ_##FuncName##_T>(   \
+                GetProcAddress(dll, "CQ_" #FuncName));               \
+        });
+
 /**
  * 本文件用于定义 CQP.dll 提供的 API, 参数类型和参数名保持与酷Q原生一致.
  */

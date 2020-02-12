@@ -3,7 +3,8 @@
 #include <cstdint>
 #include <functional>
 
-#include "macro.hpp"
+#define CQ_IMPORT_API_DECLARE(ReturnType, FuncName, ...) \
+    extern ReturnType(__stdcall *CQ_##FuncName)(__VA_ARGS__);
 
 using cq_bool_t = int32_t;
 

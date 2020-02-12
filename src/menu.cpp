@@ -6,7 +6,7 @@
 
 #include "api.hpp"
 #include "logging.hpp"
-#include "macro.hpp"
+#include "compatible.hpp"
 
 using namespace cqpy;
 
